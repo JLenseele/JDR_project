@@ -17,13 +17,23 @@ class Naration:
 			)
 
 	@staticmethod
-	def choice():
+	def choice(player):
+		choice_options = {
+			1: 'Communiquer',
+			2: 'Combattre',
+			3: 'Fuir',
+			4: 'Marchander',
+			5: 'Looter'
+		}
+		for key in choice_options.keys():
+			print(' ', key, '- ', choice_options[key])
+		choice = int(input(''))
+		return choice
+
+	@staticmethod
+	def reaction(player):
 		pass
 
 	@staticmethod
-	def reaction():
-		pass
-
-	@staticmethod
-	def situation():
+	def situation(player):
 		pass

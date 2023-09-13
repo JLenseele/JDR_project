@@ -24,7 +24,7 @@ class rnd_story:
 	@staticmethod
 	def rnd_attitude():
 		attitude = [
-			"Il semble pacifiste",
+			"Il semble pacifique",
 			"Il semble agressif",
 			"Il vous observe d'un air malicieux"
 		]

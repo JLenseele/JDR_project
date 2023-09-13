@@ -13,18 +13,26 @@ class MainController(object):
 
 	def run(self):
 		menu_choice = self.menu.main_menu()
+
+		# Choix creation player
 		if menu_choice == 1:
 			self.create_player()
+
+			mob = None
+			place = None
+			pnj = None
+
+			# Démarrage de l'aventure
 			Naration.begin(self.player)
 			while True:
-				Naration.choice()
-				Naration.reaction()
-				Naration.situation()
+				Naration.choice(self.player)
+				Naration.reaction(self.player)
+				Naration.situation(self.player)
 
 	def create_player(self):
 		name = PlayerViews.player_name()
 		race = PlayerViews.player_race()
-		stats = self.define_stats(race)
+		stats = self.define_player_stats(race)
 		self.player = Player(name,
 							 race,
 							 stats[0],
@@ -33,14 +41,15 @@ class MainController(object):
 							 stats[3])
 		self.player.__str__()
 
-	def define_stats(self, race):
+	@staticmethod
+	def define_player_stats(race):
 		# Humain
-		if race==1:
+		if race=='Humain':
 			stats = [12,4,4,3]
 		# Elfe
-		elif race==2:
+		elif race=='Elfe':
 			stats = [10,5,2,6]
 		# Nain
-		elif race==3:
+		elif race=='Nain':
 			stats = [15,3,4,2]
 		return stats

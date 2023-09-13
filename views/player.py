@@ -18,5 +18,5 @@ class PlayerViews(object):
 		for key in race_options.keys():
 			print(' ', key, '- ', race_options[key])
 		choice = int(input(''))
-		return choice
+		return race_options[choice]
 		
