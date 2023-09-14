@@ -1,13 +1,16 @@
 class Player:
 
-	def __init__(self, name, race, life, att, defense, agility):
+	def __init__(self, name, race, life, att, defense, dex, intel, cha, mana):
 		self.name = name
 		self.race = race
-		self.max_life = life
-		self.life = life
+		self.life_max = life
+		self.life_point = life
 		self.att = att
 		self.defense = defense
-		self.agility = agility
+		self.dex = dex
+		self.intel = intel
+		self.cha = cha
+		self.mana = mana
 		self.lvl = 1
 		self.exp = 0
 
@@ -16,16 +19,26 @@ class Player:
 			'Nom: {}\n'
 			'Race: {}\n'
 			'Lvl: {}\n'
-			'Vie: {}\n'
+			'Exp: {}\n'
+			'Vie: {}/{}\n'
 			'Att: {}\n'
 			'Def: {}\n'
-			'Agi: {}\n'
+			'Int: {}\n'
+			'Cha: {}\n'
+			'Dex: {}\n'
+			'Mana: {}\n'
+
 			.format(
 				self.name,
 				self.race,
 				self.lvl,
-				self.life,
+				self.exp,
+				self.life_point,
+				self.life_max,
 				self.att,
 				self.defense,
-				self.agility
+				self.intel,
+				self.cha,
+				self.dex,
+				self.mana
 			))
