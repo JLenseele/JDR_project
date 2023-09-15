@@ -1,4 +1,5 @@
 from models.player import Player
+from models.mob import Mob
 
 from views.menu import Menu
 from views.player import PlayerViews
@@ -27,13 +28,19 @@ class MainController(object):
             place = None
             pnj = None
 
+            # test create mob
+            mobs = open("data/mobs/goblin.txt", "r", encoding='UTF-8')
+            mob = mobs.read()
+            l = mob.split(',')
+            mobs.close()
+            goblin = Mob(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7])
+            print(goblin.name,' ', goblin.race)
+
             # Démarrage de l'aventure
             # Prologue
             Naration.elnarator(Naration.begin())
 
-            # test create mob
-            mob=open
-            models.mob()
+
 
             while True:
                 choice = Naration.choice(self.player)

@@ -1,1 +1,1 @@
-efiohbrzpih
+Name,Race,life,att,def,agi,hostility,loot
