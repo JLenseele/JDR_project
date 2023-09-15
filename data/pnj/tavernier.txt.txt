@@ -1,0 +1,2 @@
+STATS
+1,Robert le tavernier,Humain,20,5,5,2,0,(gold:[0,10], item:[]
