@@ -11,6 +11,10 @@ class MainController(object):
     def __init__(self):
         self.player = None
         self.menu = Menu()
+        self.com = False
+        self.fight = False
+        self.trade = False
+        self.loot = False
 
     def run(self):
         menu_choice = self.menu.main_menu()
@@ -24,10 +28,15 @@ class MainController(object):
             pnj = None
 
             # Démarrage de l'aventure
-            Naration.begin(self.player)
+            # Prologue
+            Naration.elnarator(Naration.begin())
+
+            # test create mob
+            mob=open
+            models.mob()
+
             while True:
                 choice = Naration.choice(self.player)
-
                 if choice == 1: Naration.communication(self.player)
                 if choice == 2: Naration.combat(self.player)
                 Naration.situation(self.player)

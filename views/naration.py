@@ -7,21 +7,9 @@ from randomizer_data.random_data import rnd_story
 class Naration:
 
 	@staticmethod
-	def begin(player):
+	def begin():
 		prologue = open("data/prologue/prologue1.txt", "r", encoding='UTF-8')
-
-		long = 0
-
-		for sentence in prologue:
-			for c in sentence:
-				if (long > 50 and c == ' ') or (c == '.'):
-					c += '\n'
-					long = 0
-				sys.stdout.write(c)
-				sys.stdout.flush()
-				time.sleep(0.05)
-				long += 1
-
+		return prologue
 
 	@staticmethod
 	def choice(player):
@@ -48,3 +36,16 @@ class Naration:
 	@staticmethod
 	def situation(player):
 		pass
+
+	@staticmethod
+	def elnarator(texte):
+		long = 0
+		for sentence in texte:
+			for c in sentence:
+				if (long > 50 and c == ' ') or (c == '.'):
+					c += '\n'
+					long = 0
+				sys.stdout.write(c)
+				sys.stdout.flush()
+				time.sleep(0.05)
+				long += 1
