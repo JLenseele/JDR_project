@@ -1,6 +1,6 @@
 class Mob:
 
-    def __init__(self, id, name, race, life, att, defense, agility, hostility, loot):
+    def __init__(self, id, name, race, life, att, defense, agility, hostility):
         self.id = id
         self.name = name
         self.race = race
@@ -9,7 +9,6 @@ class Mob:
         self.defense = defense
         self.agility = agility
         self.hostility = hostility
-        self.loot = loot
 # https://pynative.com/python-weighted-random-choices-with-probability/
     def __str__(self):
         return print(

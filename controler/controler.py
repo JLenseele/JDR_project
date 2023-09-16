@@ -5,6 +5,7 @@ from views.menu import Menu
 from views.player import PlayerViews
 from views.naration import Naration
 
+from . import cfgperser
 
 class MainController(object):
     """docstring for MainController"""
@@ -35,6 +36,9 @@ class MainController(object):
             mobs.close()
             goblin = Mob(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7])
             print(goblin.name,' ', goblin.race)
+
+            #test dialogue pnj
+            cfgperser.dialogue()
 
             # Démarrage de l'aventure
             # Prologue
