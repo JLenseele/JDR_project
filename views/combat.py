@@ -1,4 +1,6 @@
 import random
+from . import naration
+
 
 class combat(object):
 
@@ -9,9 +11,18 @@ class combat(object):
     def run_fight(self):
 
         print(f"Vous engagez le combat contre {self.mob.name}")
-        while self.player.life_point > 0 and self.mob.life_point > 0:
+        while True:
             self.hero_att()
+            if self.mob.life_point <= 0:
+                break
             self.mob_att()
+            if self.player.life_point <= 0:
+                break
+        if self.player.life_point <= 0:
+            print("Vous êtes mort ... L'aventure s'arrête ici pour vous")
+        if self.mob.life_point <= 0:
+            texte = "{} est mort\n".format(self.mob.name)
+            naration.Naration.elnarator(texte)
 
     def hero_att(self):
         fight_options = {
@@ -30,7 +41,8 @@ class combat(object):
             print(f"détail : att/{self.player.att} crit/{crit} def_mob/{self.mob.defense}")
             print(f"calcul : (att * crit) - (def_mob / 100 x att)")
             self.mob.life_point -= dammage
-            print(f"Il reste {self.mob.life_point}/{self.mob.life_max} pv")
+            if self.mob.life_point > 0:
+                print(f"Il reste {self.mob.life_point}/{self.mob.life_max} pv")
         elif choice == 2:
             crit = self.roll_dice(self.player.intel)
         elif choice == 3:
