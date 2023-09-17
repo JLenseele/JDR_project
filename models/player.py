@@ -13,6 +13,9 @@ class Player:
 		self.mana = mana
 		self.lvl = 1
 		self.exp = 0
+		self.weapon = None
+		self.spell = []
+		self.inventory = []
 
 	def __str__(self):
 		return print(

@@ -4,8 +4,10 @@ from models.mob import Mob
 from views.menu import Menu
 from views.player import PlayerViews
 from views.naration import Naration
+from views.combat import combat
 
 from . import cfgperser
+
 
 class MainController(object):
     """docstring for MainController"""
@@ -17,6 +19,7 @@ class MainController(object):
         self.fight = False
         self.trade = False
         self.loot = False
+        self.mob = None
 
     def run(self):
         menu_choice = self.menu.main_menu()
@@ -29,16 +32,19 @@ class MainController(object):
             place = None
             pnj = None
 
-            # test create mob
-            mobs = open("data/mobs/goblin.txt", "r", encoding='UTF-8')
-            mob = mobs.read()
-            l = mob.split(',')
-            mobs.close()
-            goblin = Mob(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7])
-            print(goblin.name,' ', goblin.race)
 
-            #test dialogue pnj
-            cfgperser.dialogue()
+            #test combat pnj
+            tavernier = "data/pnj/tavernier.ini"
+
+            s = cfgperser.stats_pnj(tavernier)
+            print(s[0])
+            self.mob = Mob(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8], s[9], s[10], s[11])
+
+            fight = combat(self.player, self.mob)
+            fight.run_fight()
+
+            #test dialogue
+            cfgperser.dialogue(tavernier)
 
             # Démarrage de l'aventure
             # Prologue
@@ -51,6 +57,9 @@ class MainController(object):
                 if choice == 1: Naration.communication(self.player)
                 if choice == 2: Naration.combat(self.player)
                 Naration.situation(self.player)
+
+    def taverne(self):
+        print("Vous êtes dans la taverne:")
 
     def create_player(self):
         name = PlayerViews.player_name()
