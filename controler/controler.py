@@ -80,11 +80,11 @@ class MainController(object):
     def define_player_stats(race):
         # Humain
         if race == 'Humain':
-            stats = [12, 4, 4, 3, 3, 3, 10]
+            stats = [12, 4, 20, 3, 3, 3, 10]
         # Elfe
         elif race == 'Elfe':
-            stats = [9, 3, 2, 4, 4, 4, 15]
+            stats = [9, 3, 15, 4, 4, 4, 15]
         # Nain
         elif race == 'Nain':
-            stats = [15, 6, 4, 2, 3, 2, 5]
+            stats = [15, 6, 25, 2, 3, 2, 5]
         return stats

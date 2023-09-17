@@ -48,9 +48,15 @@ class combat(object):
         elif choice == 3:
             pass
 
-    @staticmethod
-    def mob_att():
-        pass
+    def mob_att(self):
+        crit = self.roll_dice(self.mob.att)
+        dammage = int(round((self.mob.att * crit) - (self.player.defense / 100 * self.mob.att)))
+        print(f"{self.mob.name} vous attaque : {dammage} dégats infligés")
+        print(f"détail : att/{self.mob.att} crit/{crit} def_mob/{self.player.defense}")
+        print(f"calcul : (att * crit) - (def_mob / 100 x att)")
+        self.player.life_point -= dammage
+        if self.player.life_point > 0:
+            print(f"Il vous reste {self.player.life_point}/{self.player.life_max} pv")
 
     @staticmethod
     def roll_dice(modificateur):
@@ -63,7 +69,7 @@ class combat(object):
             crit = 0.8
         elif 9 < dice < 18:
             crit = 1.3
-        elif 18 < dice:
+        elif 17 < dice:
             crit = 2
         else:
             crit = 1

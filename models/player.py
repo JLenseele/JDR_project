@@ -25,7 +25,7 @@ class Player:
 			'Exp: {}\n'
 			'Vie: {}/{}\n'
 			'Att: {}\n'
-			'Def: {}\n'
+			'Def: {}%\n'
 			'Int: {}\n'
 			'Cha: {}\n'
 			'Dex: {}\n'

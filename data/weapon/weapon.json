@@ -1,0 +1,26 @@
+{
+   "weapon":{
+      "1":{
+         "id":1,
+         "name":["Epée en fer","Pied de biche"],
+         "att":2,
+         "defense":0,
+         "dex":0,
+         "intel":0,
+         "cha":0,
+	 "mana":0,
+	 "lvl":1
+      },
+      "2":{
+         "id":2,
+         "name":["Hache en fer","Batte de Baseball"],
+         "att":3,
+         "defense":0,
+         "dex":-1,
+         "intel":0,
+         "cha":0,
+	 "mana":0,
+	 "lvl":1
+      }
+   }
+}
