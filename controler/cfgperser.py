@@ -1,6 +1,6 @@
 import configparser
 import json
-from . import controler
+from controler import controler
 
 
 def dialogue(pnj_file):

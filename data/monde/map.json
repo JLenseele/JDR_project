@@ -1,8 +1,8 @@
 {
-   "weapon":{
+   "zone":{
       "1":{
          "id":1,
-         "name":["Epée en fer","Pied de biche"],
+         "name":["Village","Camp de survivant"],
          "att":2,
          "defense":0,
          "dex":0,

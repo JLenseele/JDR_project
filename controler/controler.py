@@ -1,12 +1,15 @@
+import pygame
+import os
 from models.player import Player
 from models.mob import Mob
+from models.button import Button
 
 from views.menu import Menu
 from views.player import PlayerViews
 from views.naration import Naration
 from views.combat import combat
 
-from . import cfgperser
+from controler import cfgperser
 
 
 class MainController(object):
@@ -22,6 +25,54 @@ class MainController(object):
         self.mob = None
 
     def run(self):
+        # init pygame
+        pygame.init()
+
+        # define screen size
+        screen_width = 1080
+        screen_height = 720
+
+        # define colors
+        BG = (47, 47, 47)
+        TEXT_COL = (246, 247, 246)
+
+        # create game window
+        flags = pygame.RESIZABLE
+        screen = pygame.display.set_mode((screen_width, screen_height), flags)
+        pygame.display.set_caption("JDR PROJECT")
+
+        # load button image
+        start_bt_menu = pygame.image.load('data/img/button/start_new_game.png').convert_alpha()
+        exit_bt_menu = pygame.image.load('data/img/button/exit_game.png').convert_alpha()
+
+
+        start_bt = Button(int(screen.get_width()/2), int(screen.get_height()/2)-50, start_bt_menu, 1)
+        ext_bt = Button(int(screen.get_width()/2), int(screen.get_height()/2)+50, exit_bt_menu, 1)
+
+        print(ext_bt.rect.center)
+        print(start_bt.rect.center)
+
+        running = True
+        while running:
+
+            # update background
+            screen.fill(BG)
+
+            if start_bt.draw(screen):
+                self.new_game()
+            if ext_bt.draw(screen):
+                running = False
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+            pygame.display.update()
+
+        pygame.quit()
+
+    def new_game(self):
+
+        self.menu.presentation()
         menu_choice = self.menu.main_menu()
 
         # Choix creation player
@@ -31,7 +82,6 @@ class MainController(object):
             mob = None
             place = None
             pnj = None
-
 
             #test combat pnj
             tavernier = "data/pnj/tavernier.ini"
@@ -50,12 +100,12 @@ class MainController(object):
             # Prologue
             Naration.elnarator(Naration.begin())
 
-
-
             while True:
                 choice = Naration.choice(self.player)
-                if choice == 1: Naration.communication(self.player)
-                if choice == 2: Naration.combat(self.player)
+                if choice == 1:
+                    Naration.communication(self.player)
+                if choice == 2:
+                    Naration.combat(self.player)
                 Naration.situation(self.player)
 
     def taverne(self):

@@ -1,7 +1,7 @@
 class Menu(object):
 
 	def __init__(self):
-		self.presentation()
+		self.choice = None
 
 	@staticmethod
 	def presentation():
