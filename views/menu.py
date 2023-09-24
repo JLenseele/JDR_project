@@ -5,10 +5,12 @@ class Menu(object):
 
 	@staticmethod
 	def presentation():
-		print("=========================================\n"
-              "|||||||||||  QUICK ADVENTURE  |||||||||||\n"
-              "=========================================\n")
-	
+		string = ("=========================================\n"
+				  "|||||||||||  QUICK ADVENTURE  |||||||||||\n"
+				  "+++++++++++++++++++++++++++++++++++++++++\n")
+
+		return string
+
 	@staticmethod
 	def main_menu():
 		menu_options = {
@@ -17,6 +19,6 @@ class Menu(object):
 			3: 'Quitter'
 		}
 		for key in menu_options.keys():
-			print(' ',key, '- ',menu_options[key])
+			print(' ', key, '- ', menu_options[key])
 		choice = int(input(''))
 		return choice

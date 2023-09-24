@@ -1,5 +1,6 @@
 import pygame
-import os
+from sys import exit
+
 from models.player import Player
 from models.mob import Mob
 from models.button import Button
@@ -23,90 +24,73 @@ class MainController(object):
         self.trade = False
         self.loot = False
         self.mob = None
+        self.is_playing = False
+        # define screen size
+        self.screen_width = 1080
+        self.screen_height = 720
 
     def run(self):
         # init pygame
         pygame.init()
-
-        # define screen size
-        screen_width = 1080
-        screen_height = 720
 
         # define colors
         BG = (47, 47, 47)
         TEXT_COL = (246, 247, 246)
 
         # create game window
-        flags = pygame.RESIZABLE
-        screen = pygame.display.set_mode((screen_width, screen_height), flags)
+        screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption("JDR PROJECT")
+
+        # create clock obj
+        clock = pygame.time.Clock()
+
+        # create text font
+        game_font = pygame.font.Font('data/font/tahoma.ttf', 20)
 
         # load button image
         start_bt_menu = pygame.image.load('data/img/button/start_new_game.png').convert_alpha()
         exit_bt_menu = pygame.image.load('data/img/button/exit_game.png').convert_alpha()
 
-
+        # create start menu button
         start_bt = Button(int(screen.get_width()/2), int(screen.get_height()/2)-50, start_bt_menu, 1)
         ext_bt = Button(int(screen.get_width()/2), int(screen.get_height()/2)+50, exit_bt_menu, 1)
 
-        print(ext_bt.rect.center)
-        print(start_bt.rect.center)
+        # create surface for game
+        cmd_surface = pygame.Surface((int(self.screen_width/6)*4, int(self.screen_height/2)))
+        cmd_surface.fill('gray31')
+        input_surface = pygame.Surface((int(self.screen_width/6)*4, 30))
+        input_surface.fill('gray40')
 
-        running = True
-        while running:
+        # create text_surface
+        writting_text_surface = game_font.render('test', True, TEXT_COL)
 
-            # update background
-            screen.fill(BG)
 
-            if start_bt.draw(screen):
-                self.new_game()
-            if ext_bt.draw(screen):
-                running = False
+        while True:
 
+            # check if any event is quit
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    pygame.quit()
+                    exit()
+
+            # fill all screen with color BG
+            screen.fill(BG)
+
+            if self.is_playing:
+                screen.blit(cmd_surface, (int(self.screen_width / 6), 0))
+                screen.blit(input_surface, (int(self.screen_width / 6), int(self.screen_height / 2) + 10))
+                cmd_surface.blit(writting_text_surface, (10, cmd_surface.get_height()-30))
+
+            else:
+                if start_bt.draw(screen):
+                    self.is_playing = True
+                if ext_bt.draw(screen):
+                    pygame.quit()
+                    exit()
+
+            # update entire window
             pygame.display.update()
-
-        pygame.quit()
-
-    def new_game(self):
-
-        self.menu.presentation()
-        menu_choice = self.menu.main_menu()
-
-        # Choix creation player
-        if menu_choice == 1:
-            self.create_player()
-
-            mob = None
-            place = None
-            pnj = None
-
-            #test combat pnj
-            tavernier = "data/pnj/tavernier.ini"
-
-            s = cfgperser.stats_pnj(tavernier)
-            print(s[0])
-            self.mob = Mob(s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8], s[9], s[10], s[11])
-
-            fight = combat(self.player, self.mob)
-            fight.run_fight()
-
-            #test dialogue
-            cfgperser.dialogue(tavernier)
-
-            # Démarrage de l'aventure
-            # Prologue
-            Naration.elnarator(Naration.begin())
-
-            while True:
-                choice = Naration.choice(self.player)
-                if choice == 1:
-                    Naration.communication(self.player)
-                if choice == 2:
-                    Naration.combat(self.player)
-                Naration.situation(self.player)
+            clock.tick(60)
 
     def taverne(self):
         print("Vous êtes dans la taverne:")
