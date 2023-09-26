@@ -56,13 +56,17 @@ class MainController(object):
         ext_bt = Button(int(screen.get_width()/2), int(screen.get_height()/2)+50, exit_bt_menu, 1)
 
         # create surface for game
-        cmd_surface = pygame.Surface((int(self.screen_width/6)*4, int(self.screen_height/2)))
-        cmd_surface.fill('gray31')
-        input_surface = pygame.Surface((int(self.screen_width/6)*4, 30))
-        input_surface.fill('gray40')
+        cmd_surf = pygame.Surface((int(self.screen_width/6)*4, int(self.screen_height/2)))
+        cmd_surf.fill('gray31')
+        cmd_rect = cmd_surf.get_rect(topleft = (int(self.screen_width / 6), 0))
+
+        input_surf = pygame.Surface((int(self.screen_width/6)*4, 30))
+        input_surf.fill((47, 47, 200))
+        input_text_surf = game_font.render('text input here', True, TEXT_COL)
+        input_rect = input_surf.get_rect(topleft = (int(self.screen_width / 6), int(self.screen_height / 2) + 10))
 
         # create text_surface
-        writting_text_surface = game_font.render('test', True, TEXT_COL)
+        writting_text_surf = game_font.render('text writting here', True, TEXT_COL)
 
 
         while True:
@@ -77,9 +81,17 @@ class MainController(object):
             screen.fill(BG)
 
             if self.is_playing:
-                screen.blit(cmd_surface, (int(self.screen_width / 6), 0))
-                screen.blit(input_surface, (int(self.screen_width / 6), int(self.screen_height / 2) + 10))
-                cmd_surface.blit(writting_text_surface, (10, cmd_surface.get_height()-30))
+                screen.blit(cmd_surf, (int(self.screen_width / 6), 0))
+                screen.blit(input_surf, (int(self.screen_width / 6), int(self.screen_height / 2) + 10))
+                pygame.draw.rect(screen, 'Green', input_rect, 1, 20)
+                pygame.draw.rect(screen, 'Green', cmd_rect, 1, 20)
+                pygame.draw.line(screen,
+                                 'Green',
+                                 (0, int(self.screen_height/2 + 20 + input_surf.get_height())),
+                                 (self.screen_width, int(self.screen_height/2 + 20 + input_surf.get_height()))
+                                 )
+                input_surf.blit(input_text_surf, (10,0))
+                cmd_surf.blit(writting_text_surf, (10, cmd_surf.get_height()-30))
 
             else:
                 if start_bt.draw(screen):
