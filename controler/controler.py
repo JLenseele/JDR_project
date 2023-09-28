@@ -1,8 +1,10 @@
 import pygame
+from tinydb import TinyDB, Query
 from sys import exit
 
 from models.button import Button
 from models.surface import Surface
+from models.dialogue import Pnjdialogue, Playerdialogue
 
 from views.player import PlayerViews
 from views.naration import Naration
@@ -47,7 +49,6 @@ class Menu(Scene):
         self.screen_width = 1080
         self.screen_height = 720
         # music
-        self.music = pygame.mixer.Sound('data/music/menu/music_menu.mp3')
         self.channel = pygame.mixer.Channel(0)
         # bouton
         self.resume_bt = Button(250, 50,
@@ -65,7 +66,8 @@ class Menu(Scene):
 
     def on_start(self):
         # music menu
-        self.channel.play(self.music, -1)
+        pygame.mixer.music.load('data/music/menu/music_menu.mp3')
+        pygame.mixer.music.play(-1)
 
         # logo
         logo_main = pygame.image.load('data/logo/logo.png').convert_alpha()
@@ -111,12 +113,20 @@ class Game(Scene):
         self.screen_width = 1080
         self.screen_height = 720
         # music
-        self.music = pygame.mixer.Sound("data/music/in_game/first.mp3")
+        self.music = pygame.mixer.music.load("data/music/in_game/first.mp3")
         self.channel = pygame.mixer.Channel(0)
+        self.prologue = False
+
+    def load_objects(self):
+        dial_file_name = 'data/prologue/prologue1'
+        db = TinyDB(dial_file_name + '.json')
+
 
     def on_start(self):
+        self.load_objects()
         print('GAME')
-        self.channel.play(self.music, -1)
+        pygame.mixer.music.load("data/music/in_game/first.mp3")
+        pygame.mixer.music.play(-1)
         self.screen.fill('Green')
 
         # affiche le CMD display_text
@@ -178,7 +188,16 @@ class Game(Scene):
         pygame.display.flip()
 
     def update(self, events):
-        return self
+        while True:
+            # check if any event is quit
+            events = pygame.event.get()
+            print('boucle 2')
+            for event in events:
+                if event.type == pygame.QUIT:
+                    return
+
+
+            return self
 
 
 def main():
