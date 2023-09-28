@@ -3,13 +3,14 @@ import pygame
 
 class Button:
 
-    def __init__(self, x, y, image, scale):
-        w = image.get_width()
-        h = image.get_height()
-        self.image = image
-        self.rect = self.image.get_rect()
+    def __init__(self, w, h, x, y, bk_color, text, font, image=None):
+        self.surface = pygame.Surface((w, h))
+        self.rect = self.surface.get_rect()
         self.rect.center = (x, y)
         self.clicked = False
+        self.bk = bk_color
+        self.text = font.render(text, True, 'White')
+        self.text_rect = self.text.get_rect(center=self.rect.center)
 
     def draw(self, screen):
         action = False
@@ -19,14 +20,19 @@ class Button:
 
         # check mouse over and click pos
         if self.rect.collidepoint(pos):
+            pygame.draw.rect(screen, 'royalblue4', self.rect, 0, 10)
             if pygame.mouse.get_pressed()[0] == 1 and self.clicked ==False:
                 self.clicked = True
                 action = True
 
             if pygame.mouse.get_pressed()[0] == 0:
                 self.clicked = False
+        else:
+            pygame.draw.rect(screen, self.bk, self.rect, 0, 10)
 
         # draw button on screen
-        screen.blit(self.image, (self.rect.x, self.rect.y))
+        self.surface.set_alpha(0)
 
+        screen.blit(self.surface, self.rect)
+        screen.blit(self.text, self.text_rect)
         return action

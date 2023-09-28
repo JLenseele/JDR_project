@@ -1,10 +1,11 @@
-from controler.controler import MainController
+from controler.controler import main
+import pygame
 
 
-def main():
-    game = MainController()
-    game.run()
+def launch():
+    main()
+    pygame.quit()
 
 
 if __name__ == '__main__':
-    main()
+    launch()

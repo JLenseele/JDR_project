@@ -1,136 +1,215 @@
 import pygame
 from sys import exit
 
-from models.player import Player
-from models.mob import Mob
 from models.button import Button
+from models.surface import Surface
 
-from views.menu import Menu
 from views.player import PlayerViews
 from views.naration import Naration
 from views.combat import combat
 
 from controler import cfgperser
 
+# init pygame
+pygame.init()
+# define colors
+BG = (47, 47, 47)
+BT_MENU_FONT = pygame.font.Font(None, 30)
+TITLE_FONT = pygame.font.Font(None, 100)
+TEXT_FONT = pygame.font.Font(None, 20)
 
-class MainController(object):
+
+class Scene:
+    def on_start(self):
+        pass
+
+    def handling_event(self):
+        pass
+
+    def update(self, events):
+        pass
+
+    def display(self):
+        pass
+
+    def on_exit(self):
+        pass
+
+
+class Menu(Scene):
     """docstring for MainController"""
 
-    def __init__(self):
-        self.player = None
-        self.menu = Menu()
-        self.com = False
-        self.fight = False
-        self.trade = False
-        self.loot = False
-        self.mob = None
+    def __init__(self, screen, scenes):
+        self.screen = screen
+        self.scenes = scenes
         self.is_playing = False
         # define screen size
         self.screen_width = 1080
         self.screen_height = 720
+        # music
+        self.music = pygame.mixer.Sound('data/music/menu/music_menu.mp3')
+        self.channel = pygame.mixer.Channel(0)
+        # bouton
+        self.resume_bt = Button(250, 50,
+                             self.screen_width / 2, self.screen_height / 2 + 25,
+                             'Blue',
+                             'Reprendre la Partie', BT_MENU_FONT)
+        self.new_game_bt = Button(200, 50,
+                                  self.screen_width/2, self.screen_height/2 + 100,
+                                  'Blue',
+                                  'Nouvelle Partie', BT_MENU_FONT)
+        self.ext_bt = Button(150, 50,
+                                  self.screen_width/2, self.screen_height/2 + 175,
+                                  'Blue',
+                                  'Quitter', BT_MENU_FONT)
 
-    def run(self):
-        # init pygame
-        pygame.init()
+    def on_start(self):
+        # music menu
+        self.channel.play(self.music, -1)
 
-        # define colors
-        BG = (47, 47, 47)
-        TEXT_COL = (246, 247, 246)
+        # logo
+        logo_main = pygame.image.load('data/logo/logo.png').convert_alpha()
+        logo_main = pygame.transform.scale(logo_main, (489, 534))
+        logo_rect = logo_main.get_rect(center=(self.screen_width / 2, self.screen_height / 2))
 
-        # create game window
-        screen = pygame.display.set_mode((self.screen_width, self.screen_height))
-        pygame.display.set_caption("JDR PROJECT")
+        self.screen.fill('blue4')
 
-        # create clock obj
-        clock = pygame.time.Clock()
+        # Logo menu principal
+        self.screen.blit(logo_main, logo_rect)
 
-        # create text font
-        game_font = pygame.font.Font('data/font/tahoma.ttf', 20)
+        # Titre
+        title_text = TITLE_FONT.render('Une histoire à dormir debout',
+                                       False, 'darkolivegreen1')
+        title_rect = title_text.get_rect(center=(self.screen_width / 2, self.screen_height / 3))
+        self.screen.blit(title_text, title_rect)
 
-        # load button image
-        start_bt_menu = pygame.image.load('data/img/button/start_new_game.png').convert_alpha()
-        exit_bt_menu = pygame.image.load('data/img/button/exit_game.png').convert_alpha()
+    def handling_event(self):
+        pass
 
-        # create start menu button
-        start_bt = Button(int(screen.get_width()/2), int(screen.get_height()/2)-50, start_bt_menu, 1)
-        ext_bt = Button(int(screen.get_width()/2), int(screen.get_height()/2)+50, exit_bt_menu, 1)
+    def update(self, events):
+        # bouton menu options
+        if self.resume_bt.draw(self.screen):
+            return self.scenes['game']
+        if self.new_game_bt.draw(self.screen):
+            return self.scenes['game']
+        if self.ext_bt.draw(self.screen):
+            pygame.quit()
+            exit()
 
-        # create surface for game
-        cmd_surf = pygame.Surface((int(self.screen_width/6)*4, int(self.screen_height/2)))
-        cmd_surf.fill('gray31')
-        cmd_rect = cmd_surf.get_rect(topleft = (int(self.screen_width / 6), 0))
+        pygame.display.flip()
 
-        input_surf = pygame.Surface((int(self.screen_width/6)*4, 30))
-        input_surf.fill((47, 47, 200))
-        input_text_surf = game_font.render('text input here', True, TEXT_COL)
-        input_rect = input_surf.get_rect(topleft = (int(self.screen_width / 6), int(self.screen_height / 2) + 10))
-
-        # create text_surface
-        writting_text_surf = game_font.render('text writting here', True, TEXT_COL)
+        return self
 
 
-        while True:
+class Game(Scene):
 
-            # check if any event is quit
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
+    def __init__(self, screen, scenes):
+        self.screen = screen
+        self.scenes = scenes
+        self.is_playing = True
+        # define screen size
+        self.screen_width = 1080
+        self.screen_height = 720
+        # music
+        self.music = pygame.mixer.Sound("data/music/in_game/first.mp3")
+        self.channel = pygame.mixer.Channel(0)
 
-            # fill all screen with color BG
-            screen.fill(BG)
+    def on_start(self):
+        print('GAME')
+        self.channel.play(self.music, -1)
+        self.screen.fill('Green')
 
-            if self.is_playing:
-                screen.blit(cmd_surf, (int(self.screen_width / 6), 0))
-                screen.blit(input_surf, (int(self.screen_width / 6), int(self.screen_height / 2) + 10))
-                pygame.draw.rect(screen, 'Green', input_rect, 1, 20)
-                pygame.draw.rect(screen, 'Green', cmd_rect, 1, 20)
-                pygame.draw.line(screen,
-                                 'Green',
-                                 (0, int(self.screen_height/2 + 20 + input_surf.get_height())),
-                                 (self.screen_width, int(self.screen_height/2 + 20 + input_surf.get_height()))
-                                 )
-                input_surf.blit(input_text_surf, (10,0))
-                cmd_surf.blit(writting_text_surf, (10, cmd_surf.get_height()-30))
+        # affiche le CMD display_text
+        display_surf = pygame.Surface((self.screen_width / 6 * 4, self.screen_height / 5 * 2))
+        display_rect = display_surf.get_rect(midtop=(self.screen_width / 2, 0))
+        display_surf.set_alpha(100)
+        # affiche input text
+        input_surf = pygame.Surface((self.screen_width/6*4, 35))
+        input_rect = display_surf.get_rect(midtop=(self.screen_width / 2, display_rect.bottom + 20))
+        input_surf.set_alpha(200)
 
-            else:
-                if start_bt.draw(screen):
-                    self.is_playing = True
-                if ext_bt.draw(screen):
-                    pygame.quit()
-                    exit()
+        # main dashboard
+        main_dashboard_surf = pygame.Surface((self.screen_width, self.screen_height/6*3))
+        main_dashboard_rect = main_dashboard_surf.get_rect(midbottom=(self.screen_width/2, self.screen_height))
+        main_dashboard_surf.set_alpha(200)
+        # ajout stats au dashboard
+        stats_surf = pygame.Surface((main_dashboard_rect.width/7, main_dashboard_rect.height))
+        stats_rect = stats_surf.get_rect(midleft=(0, main_dashboard_rect.height/2))
+        stats_surf.fill('orange')
+        # ajout item menu au dashboard
+        item_surf = pygame.Surface((main_dashboard_rect.width/7*3, main_dashboard_rect.height))
+        item_rect = item_surf.get_rect(midleft=stats_rect.midright)
+        item_surf.fill('yellow')
+        # ajout jauge (vie/mana) menu au dashboard
+        jauge_surf = pygame.Surface((main_dashboard_rect.width / 7*2, main_dashboard_rect.height))
+        jauge_rect = jauge_surf.get_rect(midleft=item_rect.midright)
+        jauge_surf.fill('red')
+        # ajout spell menu au dashboard
+        spell_surf = pygame.Surface((main_dashboard_rect.width / 7, main_dashboard_rect.height))
+        spell_rect = spell_surf.get_rect(midleft=jauge_rect.midright)
+        spell_surf.fill('orchid')
 
-            # update entire window
-            pygame.display.update()
-            clock.tick(60)
+        # affiche console text
+        self.screen.blit(display_surf, display_rect)
+        text = TEXT_FONT.render('texte de test', True, 'White')
+        text_rect = text.get_rect(bottomleft=(display_rect.left + 10, display_rect.bottom - 10))
+        self.screen.blit(text, text_rect)
 
-    def taverne(self):
-        print("Vous êtes dans la taverne:")
+        # affiche barre input
+        self.screen.blit(input_surf, input_rect)
 
-    def create_player(self):
-        name = PlayerViews.player_name()
-        race = PlayerViews.player_race()
-        stats = self.define_player_stats(race)
-        self.player = Player(name,
-                             race,
-                             stats[0],
-                             stats[1],
-                             stats[2],
-                             stats[3],
-                             stats[4],
-                             stats[5],
-                             stats[6], )
-        self.player.__str__()
+        # dessine barre hor. central
+        pygame.draw.line(self.screen, (0, 0, 0, 150),
+                         (0, self.screen_height / 2), (self.screen_width, self.screen_height / 2),
+                         5)
 
-    @staticmethod
-    def define_player_stats(race):
-        # Humain
-        if race == 'Humain':
-            stats = [12, 4, 20, 3, 3, 3, 10]
-        # Elfe
-        elif race == 'Elfe':
-            stats = [9, 3, 15, 4, 4, 4, 15]
-        # Nain
-        elif race == 'Nain':
-            stats = [15, 6, 25, 2, 3, 2, 5]
-        return stats
+        # affiche les stats dans le dashboard
+        main_dashboard_surf.blit(stats_surf, stats_rect)
+        # affiche item menu dans le DB
+        main_dashboard_surf.blit(item_surf, item_rect)
+        # affiche jauge (vie/mana) menu dans le DB
+        main_dashboard_surf.blit(jauge_surf, jauge_rect)
+        # affiche spell menu dans le DB
+        main_dashboard_surf.blit(spell_surf, spell_rect)
+        # affiche le dashboard principal
+        self.screen.blit(main_dashboard_surf, main_dashboard_rect)
+
+        # maj la fenetre
+        pygame.display.flip()
+
+    def update(self, events):
+        return self
+
+
+def main():
+
+    # create game window
+    screen = pygame.display.set_mode((1080, 720))
+    clock = pygame.time.Clock()
+
+    # All the scene
+    scenes = {}
+    scenes['menu'] = Menu(screen, scenes)
+    scenes['game'] = Game(screen, scenes)
+
+    # Start on Menu
+    scene = scenes['menu']
+    scene.on_start()
+    while True:
+        # check if any event is quit
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                return
+
+        # switch scene
+        new_scene = scene.update(events)
+        if new_scene is not scene:
+            print('o')
+            scene.on_exit()
+            scene = new_scene
+            scene.on_start()
+
+        clock.tick(60)
+        pygame.display.update()
+
