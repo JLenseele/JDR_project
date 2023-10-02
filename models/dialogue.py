@@ -1,6 +1,6 @@
 class Dialogue:
 
-    def __init__(self, id, content, next_id, description, end):
+    def __init__(self, id, content, next_id, description, end, role):
         self.id = id
         self.content = content
         self.next = next_id
@@ -13,7 +13,7 @@ class Dialogue:
 
 class Pnjdialogue(Dialogue):
 
-    def __init__(self, id, content, next_id, description, end):
+    def __init__(self, id, content, next_id, description, end, role):
         super().__init__(id=id,
                          content=content,
                          next_id=next_id,
@@ -24,12 +24,10 @@ class Pnjdialogue(Dialogue):
 
 class Playerdialogue(Dialogue):
 
-    def __init__(self, id, content, next_id, description, end, accept_quest=None):
+    def __init__(self, id, content, next_id, description, end, role, accept_quest=None):
         super().__init__(id=id,
                          content=content,
                          next_id=next_id,
                          description=description,
                          end=end)
-        self.accept_quest = accept_quest
-
-
+        self.quest = quest

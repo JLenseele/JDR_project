@@ -116,13 +116,32 @@ class Game(Scene):
         self.music = pygame.mixer.music.load("data/music/in_game/first.mp3")
         self.channel = pygame.mixer.Channel(0)
         self.prologue = False
+        self.list_pnjdialogue = []
+        self.list_playerdialogue = []
 
     def load_objects(self):
-        dial_file_name = 'data/prologue/prologue1'
-        db = TinyDB(dial_file_name + '.json')
 
+        file_name = 'data/prologue/prologue1'
+        db = TinyDB(dial_file_name + '.json')
+        dial_table = db.table('dialogue')
+        ser_dial = dial_table.all()
+
+        for dial in ser_dial:
+            d_id = dial['id']
+            d_content = dial['content']
+            d_next = dial['next']
+            d_descr = dial['descr']
+            d_end = dial['end']
+            if dial['quest']
+                d_quest = dial['quest']
+                obj = Playerdialogue(d_id, d_content, d_next, d_descr, d_end, d_quest)
+                self.list_playerdialogue.append(Ply_dial)
+            else:
+                obj = Pnjdialogue(d_id, d_content, d_next, d_descr, d_end)
+                self.list_pnjdialogue.append(Pnj_dial)
 
     def on_start(self):
+
         self.load_objects()
         print('GAME')
         pygame.mixer.music.load("data/music/in_game/first.mp3")
@@ -191,7 +210,6 @@ class Game(Scene):
         while True:
             # check if any event is quit
             events = pygame.event.get()
-            print('boucle 2')
             for event in events:
                 if event.type == pygame.QUIT:
                     return
@@ -224,7 +242,6 @@ def main():
         # switch scene
         new_scene = scene.update(events)
         if new_scene is not scene:
-            print('o')
             scene.on_exit()
             scene = new_scene
             scene.on_start()

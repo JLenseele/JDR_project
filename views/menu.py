@@ -22,3 +22,4 @@ class Menu(object):
 			print(' ', key, '- ', menu_options[key])
 		choice = int(input(''))
 		return choice
+		
