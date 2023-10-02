@@ -1,17 +1,20 @@
-{"players": {
-	"1": {
-		"id": 1, 
-		"content": "Lorem ipsum",
-		"next": 2, 
-		"descr": "player", 
-		"end": "False", 
-		"quest": "None"
-	}, 
-	"2": {
-		"id": 1, 
-		"content": "Lorem ipsum",
-		"next": 2, 
-		"descr": "player", 
-		"end": "False", 
-		"quest": "None"
-	}
+{
+   "players":{
+      "1":{
+         "id":1,
+         "content":"Lorem ipsum",
+         "next":2,
+         "descr":"player",
+         "end":"False",
+         "quest":"None"
+      },
+      "2":{
+         "id":1,
+         "content":"Lorem ipsum",
+         "next":2,
+         "descr":"player",
+         "end":"False",
+         "quest":"None"
+      }
+   }
+}

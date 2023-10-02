@@ -18,7 +18,7 @@ pygame.init()
 BG = (47, 47, 47)
 BT_MENU_FONT = pygame.font.Font(None, 30)
 TITLE_FONT = pygame.font.Font(None, 100)
-TEXT_FONT = pygame.font.Font(None, 20)
+TEXT_FONT = pygame.font.Font(None, 25)
 
 
 class Scene:
@@ -69,21 +69,28 @@ class Menu(Scene):
         pygame.mixer.music.load('data/music/menu/music_menu.mp3')
         pygame.mixer.music.play(-1)
 
+        # main menu bk
+        screen_bk = pygame.image.load('data/img/background/1.png').convert_alpha()
+        screen_rect = screen_bk.get_rect(center=(self.screen_width / 2, self.screen_height / 2))
+
         # logo
-        logo_main = pygame.image.load('data/logo/logo.png').convert_alpha()
+        logo_main = pygame.image.load('data/img/logo/logo.png').convert_alpha()
         logo_main = pygame.transform.scale(logo_main, (489, 534))
         logo_rect = logo_main.get_rect(center=(self.screen_width / 2, self.screen_height / 2))
 
-        self.screen.fill('blue4')
+        self.screen.fill('black')
+
+        # background menu principal
+        self.screen.blit(screen_bk, screen_rect)
 
         # Logo menu principal
-        self.screen.blit(logo_main, logo_rect)
+        #self.screen.blit(logo_main, logo_rect)
 
         # Titre
         title_text = TITLE_FONT.render('Une histoire à dormir debout',
-                                       False, 'darkolivegreen1')
+                                       False, 'black')
         title_rect = title_text.get_rect(center=(self.screen_width / 2, self.screen_height / 3))
-        self.screen.blit(title_text, title_rect)
+        #self.screen.blit(title_text, title_rect)
 
     def handling_event(self):
         pass
@@ -115,14 +122,40 @@ class Game(Scene):
         # music
         self.music = pygame.mixer.music.load("data/music/in_game/first.mp3")
         self.channel = pygame.mixer.Channel(0)
-        self.prologue = False
+        # affiche le CMD display_text
+        self.display_surf = pygame.Surface((self.screen_width / 6 * 4, self.screen_height / 5 * 2))
+        self.display_rect = self.display_surf.get_rect(midtop=(self.screen_width / 2, 0))
+        # affiche input text
+        self.input_surf = pygame.Surface((self.screen_width/6*4, 35))
+        self.input_rect = self.display_surf.get_rect(midtop=(self.screen_width / 2, self.display_rect.bottom + 20))
+        # main dashboard
+        self.main_dashboard_surf = pygame.Surface((self.screen_width, self.screen_height/2))
+        self.main_dashboard_rect = self.main_dashboard_surf.get_rect(midbottom=(self.screen_width/2, self.screen_height))
+        # ajout stats au dashboard
+        self.stats_surf = pygame.Surface((self.main_dashboard_rect.width/7, self.main_dashboard_rect.height))
+        self.stats_rect = self.stats_surf.get_rect(midleft=(0, self.main_dashboard_rect.height/2))
+        # ajout item menu au dashboard
+        self.item_surf = pygame.Surface((self.main_dashboard_rect.width/7*3, self.main_dashboard_rect.height))
+        self.item_rect = self.item_surf.get_rect(midleft=self.stats_rect.midright)
+        # ajout jauge (vie/mana) menu au dashboard
+        self.jauge_surf = pygame.Surface((self.main_dashboard_rect.width / 7*2, self.main_dashboard_rect.height))
+        self.jauge_rect = self.jauge_surf.get_rect(midleft=self.item_rect.midright)
+        # ajout spell menu au dashboard
+        self.spell_surf = pygame.Surface((self.main_dashboard_rect.width / 7, self.main_dashboard_rect.height))
+        self.spell_rect = self.spell_surf.get_rect(midleft=self.jauge_rect.midright)
+        # texte dans le cmd
+        self.text_wr = TEXT_FONT.render('', True, 'White')
+        self.text_wr_rect = self.text_wr.get_rect(bottomleft=(self.display_rect.left + 10, self.display_rect.bottom - 10))
+        self.text_rd = self.text_wr
+        self.text_rd_rect = self.display_rect
+
         self.list_pnjdialogue = []
         self.list_playerdialogue = []
 
     def load_objects(self):
 
         file_name = 'data/prologue/prologue1'
-        db = TinyDB(dial_file_name + '.json')
+        db = TinyDB(file_name + '.json')
         dial_table = db.table('dialogue')
         ser_dial = dial_table.all()
 
@@ -132,90 +165,70 @@ class Game(Scene):
             d_next = dial['next']
             d_descr = dial['descr']
             d_end = dial['end']
-            if dial['quest']
+            if dial['quest']:
                 d_quest = dial['quest']
                 obj = Playerdialogue(d_id, d_content, d_next, d_descr, d_end, d_quest)
-                self.list_playerdialogue.append(Ply_dial)
+                self.list_playerdialogue.append(obj)
             else:
                 obj = Pnjdialogue(d_id, d_content, d_next, d_descr, d_end)
-                self.list_pnjdialogue.append(Pnj_dial)
+                self.list_pnjdialogue.append(obj)
+
+    def load_text(self):
+        return 'texte de test lorem ipsum mon cul sur la commode'
+
+    def show_text(self, text):
+        chars = ''
+        for i in range(len(text)):
+            chars += text[i]
+            self.text_wr = TEXT_FONT.render(chars, False, 'White')
+            self.screen.blit(self.text_wr, self.text_wr_rect)
+            pygame.display.update()
+            pygame.time.wait(25)
 
     def on_start(self):
 
         self.load_objects()
-        print('GAME')
         pygame.mixer.music.load("data/music/in_game/first.mp3")
         pygame.mixer.music.play(-1)
+
         self.screen.fill('Green')
 
-        # affiche le CMD display_text
-        display_surf = pygame.Surface((self.screen_width / 6 * 4, self.screen_height / 5 * 2))
-        display_rect = display_surf.get_rect(midtop=(self.screen_width / 2, 0))
-        display_surf.set_alpha(100)
-        # affiche input text
-        input_surf = pygame.Surface((self.screen_width/6*4, 35))
-        input_rect = display_surf.get_rect(midtop=(self.screen_width / 2, display_rect.bottom + 20))
-        input_surf.set_alpha(200)
+        self.display_surf.set_alpha(100)
+        self.input_surf.set_alpha(200)
+        self.main_dashboard_surf.set_alpha(200)
 
-        # main dashboard
-        main_dashboard_surf = pygame.Surface((self.screen_width, self.screen_height/6*3))
-        main_dashboard_rect = main_dashboard_surf.get_rect(midbottom=(self.screen_width/2, self.screen_height))
-        main_dashboard_surf.set_alpha(200)
-        # ajout stats au dashboard
-        stats_surf = pygame.Surface((main_dashboard_rect.width/7, main_dashboard_rect.height))
-        stats_rect = stats_surf.get_rect(midleft=(0, main_dashboard_rect.height/2))
-        stats_surf.fill('orange')
-        # ajout item menu au dashboard
-        item_surf = pygame.Surface((main_dashboard_rect.width/7*3, main_dashboard_rect.height))
-        item_rect = item_surf.get_rect(midleft=stats_rect.midright)
-        item_surf.fill('yellow')
-        # ajout jauge (vie/mana) menu au dashboard
-        jauge_surf = pygame.Surface((main_dashboard_rect.width / 7*2, main_dashboard_rect.height))
-        jauge_rect = jauge_surf.get_rect(midleft=item_rect.midright)
-        jauge_surf.fill('red')
-        # ajout spell menu au dashboard
-        spell_surf = pygame.Surface((main_dashboard_rect.width / 7, main_dashboard_rect.height))
-        spell_rect = spell_surf.get_rect(midleft=jauge_rect.midright)
-        spell_surf.fill('orchid')
+        self.stats_surf.fill('orange')
+        self.item_surf.fill('yellow')
+        self.jauge_surf.fill('red')
+        self.spell_surf.fill('orchid')
 
         # affiche console text
-        self.screen.blit(display_surf, display_rect)
-        text = TEXT_FONT.render('texte de test', True, 'White')
-        text_rect = text.get_rect(bottomleft=(display_rect.left + 10, display_rect.bottom - 10))
-        self.screen.blit(text, text_rect)
-
+        self.screen.blit(self.display_surf, self.display_rect)
+        self.screen.blit(self.text_wr, self.text_wr_rect)
+        self.screen.blit(self.text_rd, self.text_rd_rect)
         # affiche barre input
-        self.screen.blit(input_surf, input_rect)
+        self.screen.blit(self.input_surf, self.input_rect)
+        # affiche les stats dans le dashboard
+        self.main_dashboard_surf.blit(self.stats_surf, self.stats_rect)
+        # affiche item menu dans le DB
+        self.main_dashboard_surf.blit(self.item_surf, self.item_rect)
+        # affiche jauge (vie/mana) menu dans le DB
+        self.main_dashboard_surf.blit(self.jauge_surf, self.jauge_rect)
+        # affiche spell menu dans le DB
+        self.main_dashboard_surf.blit(self.spell_surf, self.spell_rect)
+        # affiche le dashboard principal
+        self.screen.blit(self.main_dashboard_surf, self.main_dashboard_rect)
 
         # dessine barre hor. central
         pygame.draw.line(self.screen, (0, 0, 0, 150),
                          (0, self.screen_height / 2), (self.screen_width, self.screen_height / 2),
                          5)
 
-        # affiche les stats dans le dashboard
-        main_dashboard_surf.blit(stats_surf, stats_rect)
-        # affiche item menu dans le DB
-        main_dashboard_surf.blit(item_surf, item_rect)
-        # affiche jauge (vie/mana) menu dans le DB
-        main_dashboard_surf.blit(jauge_surf, jauge_rect)
-        # affiche spell menu dans le DB
-        main_dashboard_surf.blit(spell_surf, spell_rect)
-        # affiche le dashboard principal
-        self.screen.blit(main_dashboard_surf, main_dashboard_rect)
-
         # maj la fenetre
         pygame.display.flip()
 
     def update(self, events):
-        while True:
-            # check if any event is quit
-            events = pygame.event.get()
-            for event in events:
-                if event.type == pygame.QUIT:
-                    return
-
-
-            return self
+        return self
 
 
 def main():
@@ -245,6 +258,14 @@ def main():
             scene.on_exit()
             scene = new_scene
             scene.on_start()
+
+        if new_scene == scenes['game']:
+            text = scene.load_text()
+            scene.show_text(text)
+
+            #choix = scene.input(events)
+            #text = scene.load_text(choix)
+            #scene.show_text(text)
 
         clock.tick(60)
         pygame.display.update()
