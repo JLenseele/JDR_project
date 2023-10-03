@@ -146,6 +146,9 @@ class Game(Scene):
         # texte dans le cmd
         self.text_wr = TEXT_FONT.render('', True, 'White')
         self.text_wr_rect = self.text_wr.get_rect(bottomleft=(self.display_rect.left + 10, self.display_rect.bottom - 10))
+        self.chars_wr = ''
+
+        self.chars_rd = ''
         self.text_rd = self.text_wr
         self.text_rd_rect = self.display_rect
 
@@ -177,13 +180,22 @@ class Game(Scene):
         return 'texte de test lorem ipsum mon cul sur la commode'
 
     def show_text(self, text):
-        chars = ''
+        self.chars_wr = ''
         for i in range(len(text)):
-            chars += text[i]
-            self.text_wr = TEXT_FONT.render(chars, False, 'White')
+            self.chars_wr += text[i]
+            self.text_wr = TEXT_FONT.render(self.chars_wr, False, 'White')
             self.screen.blit(self.text_wr, self.text_wr_rect)
             pygame.display.update()
             pygame.time.wait(25)
+
+        self.chars_rd += self.chars_wr
+        self.screen.blit(self.display_surf, self.display_rect)
+        self.text_rd = self.text_wr
+        self.screen.blit(self.text_rd, self.text_rd_rect)
+
+        self.text_wr = TEXT_FONT.render('', False, 'White')
+        self.screen.blit(self.text_wr, self.text_wr_rect)
+        pygame.display.update()
 
     def on_start(self):
 
@@ -193,7 +205,6 @@ class Game(Scene):
 
         self.screen.fill('Green')
 
-        self.display_surf.set_alpha(100)
         self.input_surf.set_alpha(200)
         self.main_dashboard_surf.set_alpha(200)
 
