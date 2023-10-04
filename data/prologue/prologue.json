@@ -1,0 +1,11 @@
+{"dialogue":
+{"1":{
+  "id":1,
+  "content": "Il était autrefois un des héros de la lumière, un gardien des univers. \nCependant, sa soif de pouvoir et de contrôle l’a corrompue. \nIl a été banni dans le royaume des ombres, un univers alternatif sombre et terrifiant. \nDans ce royaume, il a découvert une source d’énergie sombre qui a augmenté sa puissance, mais l’a également déformé, faisant de lui le Corrupteur. \nIl cherche à étendre son influence à tous les univers pour assouvir sa soif de pouvoir et de contrôle. \nSa motivation est donc la vengeance contre ceux qui l’ont banni et la domination totale sur tous les univers alternatifs. \n Il voit les Portails de l’Infini comme le moyen d’atteindre cet objectif. \nC’est pourquoi il poursuit notre héro, dans l’espoir de l’empêcher de fermer les portails et de contrecarrer ses plans. \n",
+  "next": 0,
+  "descr": "prologue",
+  "end": "True",
+  "quest": "None"
+}
+}
+}

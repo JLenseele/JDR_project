@@ -1,10 +1,13 @@
+﻿# coding: utf-8
 import pygame
+import json
+
 from tinydb import TinyDB, Query
 from sys import exit
 
 from models.button import Button
 from models.surface import Surface
-from models.dialogue import Pnjdialogue, Playerdialogue
+from models.dialogue import Dialogue
 
 from views.player import PlayerViews
 from views.naration import Naration
@@ -18,7 +21,7 @@ pygame.init()
 BG = (47, 47, 47)
 BT_MENU_FONT = pygame.font.Font(None, 30)
 TITLE_FONT = pygame.font.Font(None, 100)
-TEXT_FONT = pygame.font.Font(None, 25)
+TEXT_FONT = pygame.font.SysFont('Arial', 25)
 
 
 class Scene:
@@ -115,6 +118,7 @@ class Game(Scene):
     def __init__(self, screen, scenes):
         self.screen = screen
         self.scenes = scenes
+
         self.is_playing = True
         # define screen size
         self.screen_width = 1080
@@ -122,6 +126,9 @@ class Game(Scene):
         # music
         self.music = pygame.mixer.music.load("data/music/in_game/first.mp3")
         self.channel = pygame.mixer.Channel(0)
+        # define BK image
+        self.bk = pygame.image.load('data/img/background/BKingamev1.png').convert_alpha()
+        self.bk_rect = self.bk.get_rect()
         # affiche le CMD display_text
         self.display_surf = pygame.Surface((self.screen_width / 6 * 4, self.screen_height / 5 * 2))
         self.display_rect = self.display_surf.get_rect(midtop=(self.screen_width / 2, 0))
@@ -144,44 +151,69 @@ class Game(Scene):
         self.spell_surf = pygame.Surface((self.main_dashboard_rect.width / 7, self.main_dashboard_rect.height))
         self.spell_rect = self.spell_surf.get_rect(midleft=self.jauge_rect.midright)
         # texte dans le cmd
+
         self.text_wr = TEXT_FONT.render('', True, 'White')
         self.text_wr_rect = self.text_wr.get_rect(bottomleft=(self.display_rect.left + 10, self.display_rect.bottom - 10))
-        self.chars_wr = ''
-
-        self.chars_rd = ''
+        
+        self.chars_rd = None
         self.text_rd = self.text_wr
         self.text_rd_rect = self.display_rect
 
-        self.list_pnjdialogue = []
-        self.list_playerdialogue = []
-
-    def load_objects(self):
-
-        file_name = 'data/prologue/prologue1'
-        db = TinyDB(file_name + '.json')
-        dial_table = db.table('dialogue')
-        ser_dial = dial_table.all()
-
-        for dial in ser_dial:
-            d_id = dial['id']
-            d_content = dial['content']
-            d_next = dial['next']
-            d_descr = dial['descr']
-            d_end = dial['end']
-            if dial['quest']:
-                d_quest = dial['quest']
-                obj = Playerdialogue(d_id, d_content, d_next, d_descr, d_end, d_quest)
-                self.list_playerdialogue.append(obj)
-            else:
-                obj = Pnjdialogue(d_id, d_content, d_next, d_descr, d_end)
-                self.list_pnjdialogue.append(obj)
+        self.texts = ['']
+        self.active_line = 0
+        self.text = self.texts[self.active_line]
+        self.counter = 0
+        self.speed = 3
+        self.text_done = False
+        
+        self.prologue = True
+        self.list_dialogue = []
 
     def load_text(self):
-        return 'texte de test lorem ipsum mon cul sur la commode'
+        # self.texts = ['texte de test ', 'lorem ipsum', 'mon cul sur la commode']
+        if self.prologue:
+            file_name = 'data/prologue/prologue'
+            db = TinyDB(file_name + '.json', encoding='utf-8')
+            table = db.table('dialogue')
+            ser_text = table.all()
+            self.prologue = False
+            for text in ser_text:
+                d_id = text['id']
+                d_content = text['content']
+                d_next = text['next']
+                d_descr = text['descr']
+                d_end = text['end']
+                d_quest = text['quest']
+                obj = Dialogue(d_id, d_content, d_next, d_descr, d_end, d_quest)
+                self.list_dialogue.append(obj)
+                self.split_text(d_content)
+        return
 
-    def show_text(self, text):
-        self.chars_wr = ''
-        for i in range(len(text)):
+    def split_text(self, content):
+        lines = content.splitlines()
+        for line in lines:
+            words = line.split(' ')
+            txt = ''
+            for word in words:
+                if len(txt + word) > 60:
+                    self.texts.append(txt)
+                    txt = word
+                else:
+                    txt += ' '+word
+            self.texts.append(txt)
+        return
+
+    def show_text(self):
+        self.text = self.texts[self.active_line]
+
+        if self.counter < self.speed * len(self.text):
+            self.counter += 1
+        elif self.counter >= self.speed * len(self.text):
+            self.text_done = True
+
+        self.text_wr = TEXT_FONT.render(self.text[0:self.counter//self.speed], True, 'white')
+        self.screen.blit(self.text_wr, self.text_wr_rect)
+        '''for i in range(len(text)):
             self.chars_wr += text[i]
             self.text_wr = TEXT_FONT.render(self.chars_wr, False, 'White')
             self.screen.blit(self.text_wr, self.text_wr_rect)
@@ -195,24 +227,24 @@ class Game(Scene):
 
         self.text_wr = TEXT_FONT.render('', False, 'White')
         self.screen.blit(self.text_wr, self.text_wr_rect)
-        pygame.display.update()
+        pygame.display.update()'''
 
     def on_start(self):
 
-        self.load_objects()
         pygame.mixer.music.load("data/music/in_game/first.mp3")
         pygame.mixer.music.play(-1)
 
-        self.screen.fill('Green')
+        #self.screen.fill('Green')
 
-        self.input_surf.set_alpha(200)
-        self.main_dashboard_surf.set_alpha(200)
+        self.input_surf.set_alpha(0)
+        self.main_dashboard_surf.set_alpha(0)
 
-        self.stats_surf.fill('orange')
-        self.item_surf.fill('yellow')
-        self.jauge_surf.fill('red')
-        self.spell_surf.fill('orchid')
-
+        #self.stats_surf.fill('orange')
+        #self.item_surf.fill('yellow')
+        #self.jauge_surf.fill('red')
+        #self.spell_surf.fill('orchid')
+        # affiche le bk in game
+        self.screen.blit(self.bk, self.bk_rect)
         # affiche console text
         self.screen.blit(self.display_surf, self.display_rect)
         self.screen.blit(self.text_wr, self.text_wr_rect)
@@ -262,6 +294,15 @@ def main():
         for event in events:
             if event.type == pygame.QUIT:
                 return
+            if scene == scenes['game']:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN and scene.text_done and scene.active_line < len(scene.texts)-1:
+                        scene.active_line += 1
+                        scene.text_done = False
+                        scene.text = scene.texts[scene.active_line]
+                        scene.counter = 0
+                        scene.screen.blit(scene.display_surf, scene.display_rect)
+
 
         # switch scene
         new_scene = scene.update(events)
@@ -271,8 +312,8 @@ def main():
             scene.on_start()
 
         if new_scene == scenes['game']:
-            text = scene.load_text()
-            scene.show_text(text)
+            scene.load_text()
+            scene.show_text()
 
             #choix = scene.input(events)
             #text = scene.load_text(choix)
@@ -280,4 +321,3 @@ def main():
 
         clock.tick(60)
         pygame.display.update()
-
